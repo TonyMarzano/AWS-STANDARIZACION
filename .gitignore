@@ -1,0 +1,14 @@
+# Credenciales y secretos - nunca deben versionarse
+*.pem
+*.ppk
+*credentials*
+*.env
+.aws/
+
+# Datos de clientes instanciados a partir de templates/client-instance/
+# (cada cliente debe vivir en SU PROPIO repo, no acá)
+/clients/
+
+# Sistema
+.DS_Store
+Thumbs.db
