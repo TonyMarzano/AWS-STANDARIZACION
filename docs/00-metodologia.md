@@ -12,12 +12,12 @@ Estandarizar el proceso completo de puesta en marcha de una AWS Organization nue
 
 ```mermaid
 flowchart LR
-    A[Etapa 1\nOnboarding] --> B[Etapa 2\nLanding Zone Accelerator]
-    B --> C[Etapa 3\nWorkloads]
+    A["Etapa 1<br/>Onboarding"] --> B["Etapa 2<br/>Landing Zone Accelerator"]
+    B --> C["Etapa 3<br/>Workloads"]
 
-    A -.entrega.-> A1[Cuenta management\n+ Org + Control Tower mínimo\n+ datos de relevamiento]
-    B -.entrega.-> B1[Cuentas OU estructuradas\n+ guardrails + red base]
-    C -.entrega.-> C1[VPC / TGW / compute\npor cliente]
+    A -.entrega.-> A1["Cuenta management<br/>+ Org + Control Tower mínimo<br/>+ datos de relevamiento"]
+    B -.entrega.-> B1["Cuentas OU estructuradas<br/>+ guardrails + red base"]
+    C -.entrega.-> C1["VPC / TGW / compute<br/>por cliente"]
 ```
 
 ### Etapa 1 — Onboarding
