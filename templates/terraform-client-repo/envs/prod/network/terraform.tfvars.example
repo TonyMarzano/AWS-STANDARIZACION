@@ -1,0 +1,5 @@
+cliente             = "<cliente>"
+region              = "<home-region>"
+aws_profile         = "<perfil-cuenta-prod-cliente>"
+vpc_cidr            = "10.0.0.0/16"
+transit_gateway_id  = "tgw-xxxxxxxxxxxxxxxxx"

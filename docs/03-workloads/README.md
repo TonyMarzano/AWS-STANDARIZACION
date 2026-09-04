@@ -1,23 +1,33 @@
 # Etapa 3 — Workloads
 
-> **Estado: pendiente de completar en detalle.** Se desarrolla cuando definamos la estructura estándar de Terraform a usar entre clientes.
+Checklist maestro de la etapa. Cada paso linkea al detalle.
 
 ## Punto de partida
 
-Con las cuentas de la Etapa 2 ya creadas (Prod, NonProd, Shared Services, etc.) y la red base (Transit Gateway/IPAM) desplegada por LZA, acá se construye por Terraform lo específico de cada carga de trabajo:
+Con las cuentas de la Etapa 2 ya creadas (Prod, NonProd, Shared Services, etc.) y la red base (Transit Gateway/IPAM) desplegada por LZA, acá se construye por Terraform lo específico de cada carga de trabajo: VPC del workload y su attachment al Transit Gateway central, subredes, security groups, balanceadores, cómputo, y cualquier otro recurso de aplicación.
 
-- VPC de la carga de trabajo (attachment al Transit Gateway central).
-- Subredes, route tables, security groups.
-- Balanceadores (ALB/NLB).
-- Cómputo (EC2, ASG, ECS/EKS según el caso).
-- Cualquier otro recurso de aplicación.
+## Decisiones de arquitectura (fijas para todos los clientes)
 
-## Pendiente de documentar acá
+| Decisión | Elegido |
+|---|---|
+| Estructura de repos | Un repo de Terraform por cliente (`tf-<cliente>`) |
+| Backend de state | S3 + DynamoDB en la cuenta **Shared Services** del propio cliente (no centralizado en BGH) |
+| Reutilización de módulos | Repo aparte `terraform-modules-bgh`, módulos versionados por tag (`?ref=vX.Y.Z`) |
+| Separación de ambientes | Carpetas y state separados por ambiente (`envs/prod/`, `envs/nonprod/`), no Workspaces |
 
-- [ ] Estructura estándar de repos/módulos Terraform (¿un repo por cliente? ¿módulos reusables versionados en un registry propio?).
-- [ ] Backend de state (S3 + DynamoDB por cliente, ¿centralizado en qué cuenta?).
-- [ ] Convención de naming y tagging (heredada del intake, reforzada acá).
-- [ ] Pipeline de CI/CD para aplicar Terraform (si aplica).
+Detalle y justificación de cada una en los documentos de esta carpeta.
+
+## Flujo
+
+1. [ ] **Estructura del repo** del cliente → [`01-estructura-repos.md`](01-estructura-repos.md)
+2. [ ] **Bootstrap del backend de state** (S3 + DynamoDB en Shared Services) → [`02-backend-state.md`](02-backend-state.md)
+3. [ ] **Módulos reutilizables** — cómo referenciarlos y cómo versionarlos → [`03-modulos-reutilizables.md`](03-modulos-reutilizables.md)
+4. [ ] **Flujo de trabajo** día a día (plan/review/apply, tagging, CI/CD) → [`04-flujo-trabajo.md`](04-flujo-trabajo.md)
+5. [ ] Registrar todo en `05-workloads-notes.md` del repo de instancia del cliente
+
+## Skeleton para arrancar
+
+[`templates/terraform-client-repo/`](../../templates/terraform-client-repo/) — copiar como raíz del repo nuevo `tf-<cliente>`.
 
 ## Etapas previas
 
