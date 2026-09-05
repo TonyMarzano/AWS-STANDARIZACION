@@ -33,10 +33,13 @@ param(
 $ErrorActionPreference = "Stop"
 
 function Invoke-AwsCli {
+    # No redirigir stderr (2>&1): en Windows PowerShell 5.1 eso envuelve cualquier
+    # línea de stderr en un NativeCommandError y aborta el script aunque aws.exe
+    # haya salido con código 0. Dejamos que stderr se imprima solo a la consola.
     param([string[]]$Arguments)
-    $output = & aws @Arguments 2>&1
+    $output = & aws @Arguments
     if ($LASTEXITCODE -ne 0) {
-        throw "aws cli falló ($($Arguments -join ' ')): $output"
+        throw "aws cli falló ($($Arguments -join ' ')) con exit code $LASTEXITCODE"
     }
     return $output
 }

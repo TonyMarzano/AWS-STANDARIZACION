@@ -46,10 +46,13 @@ param(
 $ErrorActionPreference = "Stop"
 
 function Invoke-AwsCli {
+    # No redirigir stderr (2>&1): en Windows PowerShell 5.1 eso envuelve cualquier
+    # línea de stderr en un NativeCommandError y aborta el script aunque aws.exe
+    # haya salido con código 0. Dejamos que stderr se imprima solo a la consola.
     param([string[]]$Arguments)
-    $output = & aws @Arguments 2>&1
+    $output = & aws @Arguments
     if ($LASTEXITCODE -ne 0) {
-        throw "aws cli falló ($($Arguments -join ' ')): $output"
+        throw "aws cli falló ($($Arguments -join ' ')) con exit code $LASTEXITCODE"
     }
     return $output
 }
@@ -68,7 +71,7 @@ $budget = @{
     BudgetType = "COST"
 }
 
-$notificationsWithSubscribers = foreach ($threshold in $Thresholds) {
+$notificationsWithSubscribers = @(foreach ($threshold in $Thresholds) {
     @{
         Notification = @{
             NotificationType   = "ACTUAL"
@@ -76,11 +79,13 @@ $notificationsWithSubscribers = foreach ($threshold in $Thresholds) {
             Threshold          = $threshold
             ThresholdType      = "PERCENTAGE"
         }
-        Subscribers = foreach ($email in $NotificationEmails) {
+        # @(...) fuerza array: con un solo email, "foreach" sin envolver colapsa
+        # el resultado a un objeto suelto en vez de una lista de un elemento.
+        Subscribers = @(foreach ($email in $NotificationEmails) {
             @{ SubscriptionType = "EMAIL"; Address = $email }
-        }
+        })
     }
-}
+})
 
 $tempDir = Join-Path $env:TEMP ("lza-budget-" + [guid]::NewGuid())
 New-Item -ItemType Directory -Path $tempDir | Out-Null
@@ -88,8 +93,11 @@ $budgetFile = Join-Path $tempDir "budget.json"
 $notificationsFile = Join-Path $tempDir "notifications.json"
 
 try {
-    $budget | ConvertTo-Json -Depth 5 | Set-Content -Path $budgetFile -Encoding utf8
-    $notificationsWithSubscribers | ConvertTo-Json -Depth 5 | Set-Content -Path $notificationsFile -Encoding utf8
+    # Set-Content -Encoding utf8 escribe BOM en Windows PowerShell 5.1, y el parser
+    # JSON de aws.exe lo rechaza. Escribimos UTF-8 sin BOM con .NET directamente.
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($budgetFile, ($budget | ConvertTo-Json -Depth 5), $utf8NoBom)
+    [System.IO.File]::WriteAllText($notificationsFile, ($notificationsWithSubscribers | ConvertTo-Json -Depth 5), $utf8NoBom)
 
     if ($PSCmdlet.ShouldProcess("$BudgetName (cuenta $accountId)", "Crear AWS Budget de $MonthlyLimitUSD USD/mes")) {
         Write-Host "Creando budget '$BudgetName' por $MonthlyLimitUSD USD/mes con umbrales $($Thresholds -join ', ')%..."
