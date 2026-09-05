@@ -20,7 +20,21 @@ LZA se configura íntegramente vía 7 archivos YAML en el repo CodeCommit `aws-a
 
 ### 2. Estructura de cuentas y OUs → `organization-config.yaml` + `accounts-config.yaml`
 - Árbol de OUs del intake (Security / Infrastructure / Workloads → Prod, NonProd / Sandbox) → `organizationalUnits` en `organization-config.yaml`.
-- Cada cuenta listada en el intake (nombre, propósito, OU, email) → entrada en `workloadAccounts` de `accounts-config.yaml`, con su `organizationalUnit` apuntando al nodo del árbol anterior. Las cuentas `management`, `logArchive` y `audit` van en `mandatoryAccounts` y ya deberían coincidir con lo creado en la Etapa 1.
+- Cada cuenta listada en el intake (nombre, propósito, OU, email) → entrada en `workloadAccounts` de `accounts-config.yaml`, con su `organizationalUnit` apuntando al nodo del árbol anterior. Las cuentas `Management`, `LogArchive` y `Audit` van en `mandatoryAccounts`.
+
+**Validación estricta de LZA (confirmado en la práctica del 2026-09-05):** el módulo `ValidateEnvironmentConfig` del stack `Prepare` compara la Organization real contra estos dos archivos, y es más estricto de lo que parece a simple vista:
+
+- **Toda OU que exista de verdad en AWS Organizations debe estar declarada** en `organizationalUnits` — no alcanza con omitir una que no querés que LZA gestione, eso rompe la validación al revés ("Organizational Unit 'X' was not found in the organization configuration").
+- Para una OU que sí existe pero que **no** querés que LZA gestione (típicamente la OU con la(s) cuenta(s) hub de integraciones de servicio de Control Tower LZ4.0 — ver Etapa 1), declararla con `ignore: true`:
+  ```yaml
+  organizationalUnits:
+    - name: Security
+      ignore: true
+    - name: Infrastructure
+    - name: Workloads
+  ```
+- El `organizationalUnit` de `LogArchive`/`Audit` en `accounts-config.yaml` **debe coincidir exactamente** con la OU donde esas cuentas terminaron enroladas de verdad — el valor que trae el installer por default (`Security`) casi seguro está mal si seguiste el flujo de LZ4.0 de la Etapa 1 (donde terminan en una OU distinta, tipo `Workloads`). Corregirlo a mano.
+- Si algo de esto queda mal, el error real no siempre es claro: el pipeline puede fallar con un mensaje genérico `NoStack: CloudFormationStack object does not hold a stack` en el log del CodeBuild. Ese mensaje **no es la causa real** — es el eco de un stack de CloudFormation que falló y rolleó back. Para ver el error real: `aws cloudformation describe-stack-events --stack-name AWSAccelerator-PrepareStack-<management-account-id>-<region>` y buscar el evento `CREATE_FAILED` (normalmente en el recurso `ValidateEnvironmentConfig...`, con el detalle completo en `ResourceStatusReason`).
 
 ### 3. Convención de emails → `accounts-config.yaml`
 - El campo `email` de cada cuenta nueva sigue el patrón acordado en el intake (sección 3). AWS exige que sea único a nivel global — no reutilizable ni con cuentas de otro cliente.

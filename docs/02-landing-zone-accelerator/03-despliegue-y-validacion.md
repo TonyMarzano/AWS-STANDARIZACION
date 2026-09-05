@@ -15,7 +15,13 @@ El pipeline `AWSAccelerator-Pipeline` (CodePipeline, cuenta management) se dispa
 
 - Consola de **CodePipeline** en la cuenta management → ver el estado de cada stage en tiempo real.
 - Si un stage falla, el error casi siempre está en el stack de **CloudFormation** correspondiente (nombre con prefijo `AWSAccelerator-`) en la cuenta/región afectada — revisar el tab "Events" de ese stack primero.
-- Errores típicos: emails de cuenta que no matchean lo ya existente en Organizations, CIDRs solapados entre VPCs, cuotas de servicio superadas (ej. límite de VPCs por región), permission sets referenciando un grupo que no existe todavía en el IdP.
+- Errores típicos: emails de cuenta que no matchean lo ya existente en Organizations, CIDRs solapados entre VPCs, cuotas de servicio superadas (ej. límite de VPCs por región), permission sets referenciando un grupo que no existe todavía en el IdP, y los errores de configuración de OUs/cuentas descritos en [`02-mapeo-configuracion.md`](02-mapeo-configuracion.md).
+- **Reintentar un stage fallido (`retry-stage-execution`) puede no alcanzar.** Si el stack de CloudFormation asociado quedó en `ROLLBACK_COMPLETE`, hay que borrarlo antes de que la próxima corrida pueda recrearlo — un stack en ese estado no admite update. Los stacks de LZA suelen tener termination protection activa, hay que desactivarla primero:
+  ```powershell
+  aws cloudformation update-termination-protection --stack-name <nombre-del-stack> --no-enable-termination-protection --profile <perfil> --region <region>
+  aws cloudformation delete-stack --stack-name <nombre-del-stack> --profile <perfil> --region <region>
+  ```
+  Después, disparar una corrida nueva (`aws codepipeline start-pipeline-execution --name AWSAccelerator-Pipeline`) en vez de reintentar la vieja.
 
 ## 3. Validación post-despliegue
 
