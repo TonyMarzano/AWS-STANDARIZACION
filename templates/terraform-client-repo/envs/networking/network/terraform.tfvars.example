@@ -1,0 +1,14 @@
+cliente     = "<cliente>"
+region      = "<home-region>"
+aws_profile = "<perfil-cuenta-networking-cliente>"
+
+azs = ["<home-region>a", "<home-region>b"]
+
+vpc_cidr            = "10.0.0.0/16"
+public_subnet_cidrs = ["10.0.100.0/24", "10.0.101.0/24"]
+tgw_subnet_cidrs    = ["10.0.252.0/28", "10.0.252.16/28"]
+
+spoke_account_ids = [
+  "<account-id-workloads-prod>",
+  "<account-id-workloads-dev>",
+]

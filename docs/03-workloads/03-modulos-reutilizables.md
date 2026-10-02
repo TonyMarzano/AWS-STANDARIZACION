@@ -7,7 +7,7 @@ Los componentes de red y compute se repiten con variaciones menores entre client
 - Mejorar un módulo una sola vez y que cada cliente decida cuándo actualizar a la nueva versión (no rompe a nadie de forma involuntaria).
 - Tener un solo lugar donde se revisan buenas prácticas de Terraform, en vez de N copias divergiendo con el tiempo.
 
-> **Nota:** este repo (`terraform-modules-bgh`) todavía no existe — se crea cuando arranque el Terraform del primer cliente real, con el primer módulo que se necesite (probablemente `network`/VPC). No tiene sentido diseñar módulos genéricos antes de tener un caso real que los valide.
+> **Nota:** este repo (`terraform-modules-bgh`) todavía no existe como repo propio — pero ya tiene un skeleton con código funcional en [`templates/terraform-modules-bgh/`](../../templates/terraform-modules-bgh/), con los 3 módulos de la arquitectura de red de referencia (ver [`05-arquitectura-red-referencia.md`](05-arquitectura-red-referencia.md)). Al arrancar el Terraform del primer cliente real, copiar ese contenido como primer commit del repo real y taggear `v1.0.0`.
 
 ## Estructura esperada de `terraform-modules-bgh`
 
@@ -15,10 +15,11 @@ Los componentes de red y compute se repiten con variaciones menores entre client
 terraform-modules-bgh/
 ├── README.md                 Índice de módulos disponibles y su versión estable actual
 ├── modules/
-│   ├── vpc/                  VPC + subnets + route tables, parametrizable por CIDR/AZs
-│   ├── tgw-attachment/       Attachment de una VPC al Transit Gateway central de LZA
-│   ├── alb/                  Application Load Balancer + target groups
-│   ├── ec2-asg/              Auto Scaling Group + Launch Template
+│   ├── vpc/                  VPC + subnets + route tables, parametrizable por CIDR/AZs — las 3 cuentas
+│   ├── transit-gateway/      Transit Gateway + route table compartida + RAM share — Networking
+│   ├── tgw-attachment/       Attachment de una VPC al Transit Gateway, asociación/propagación explícita
+│   ├── alb/                  Application Load Balancer + target groups (pendiente)
+│   ├── ec2-asg/              Auto Scaling Group + Launch Template (pendiente)
 │   └── .../                  Se agregan a medida que aparece la necesidad real
 └── CHANGELOG.md              Un renglón por versión: qué cambió y por qué
 ```

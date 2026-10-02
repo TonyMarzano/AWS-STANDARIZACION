@@ -4,7 +4,7 @@ Checklist maestro de la etapa. Cada paso linkea al detalle.
 
 ## Punto de partida
 
-Con las cuentas de la Etapa 2 ya creadas (Prod, NonProd, Shared Services, etc.) y la red base (Transit Gateway/IPAM) desplegada por LZA, acá se construye por Terraform lo específico de cada carga de trabajo: VPC del workload y su attachment al Transit Gateway central, subredes, security groups, balanceadores, cómputo, y cualquier otro recurso de aplicación.
+Con las cuentas de la Etapa 2 ya creadas (Prod, NonProd, Shared Services, Networking, etc.), acá se construye por Terraform la red de referencia (Transit Gateway + egress centralizado) y, sobre esa base, lo específico de cada carga de trabajo: subredes de aplicación, security groups, balanceadores, cómputo, y cualquier otro recurso.
 
 ## Decisiones de arquitectura (fijas para todos los clientes)
 
@@ -14,6 +14,7 @@ Con las cuentas de la Etapa 2 ya creadas (Prod, NonProd, Shared Services, etc.) 
 | Backend de state | S3 + DynamoDB en la cuenta **Shared Services** del propio cliente (no centralizado en BGH) |
 | Reutilización de módulos | Repo aparte `terraform-modules-bgh`, módulos versionados por tag (`?ref=vX.Y.Z`) |
 | Separación de ambientes | Carpetas y state separados por ambiente (`envs/prod/`, `envs/nonprod/`), no Workspaces |
+| Red | Transit Gateway + egress centralizado en la cuenta Networking, construido en Terraform (no en LZA) — ver [`05-arquitectura-red-referencia.md`](05-arquitectura-red-referencia.md) |
 
 Detalle y justificación de cada una en los documentos de esta carpeta.
 
@@ -23,7 +24,8 @@ Detalle y justificación de cada una en los documentos de esta carpeta.
 2. [ ] **Bootstrap del backend de state** (S3 + DynamoDB en Shared Services) → [`02-backend-state.md`](02-backend-state.md)
 3. [ ] **Módulos reutilizables** — cómo referenciarlos y cómo versionarlos → [`03-modulos-reutilizables.md`](03-modulos-reutilizables.md)
 4. [ ] **Flujo de trabajo** día a día (plan/review/apply, tagging, CI/CD) → [`04-flujo-trabajo.md`](04-flujo-trabajo.md)
-5. [ ] Registrar todo en `05-workloads-notes.md` del repo de instancia del cliente
+5. [ ] **Arquitectura de red de referencia** (Transit Gateway + egress centralizado) → [`05-arquitectura-red-referencia.md`](05-arquitectura-red-referencia.md)
+6. [ ] Registrar todo en `05-workloads-notes.md` del repo de instancia del cliente
 
 ## Skeleton para arrancar
 

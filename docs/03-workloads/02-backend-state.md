@@ -10,7 +10,7 @@ La cuenta Shared Services ya existe para cuando se llega a esta etapa (la crea L
 
 ## Bootstrap (una sola vez por cliente)
 
-Esto se hace **manualmente, una vez**, antes del primer `terraform apply` de cualquier componente — el backend no puede crearse con el mismo Terraform que lo va a usar (problema del huevo y la gallina).
+Esto se hace **manualmente, una vez**, antes del primer `terraform apply` de cualquier componente — el backend no puede crearse con el mismo Terraform que lo va a usar.
 
 ```powershell
 $Profile = "<perfil-cuenta-shared-services-cliente>"

@@ -44,6 +44,8 @@ LZA se configura íntegramente vía 7 archivos YAML en el repo CodeCommit `aws-a
 - Transit Gateway (si el intake definió networking centralizado) → `transitGateways`.
 - Conectividad híbrida (VPN/DX) relevada → `transitGateways[].peering` / recursos de VPN o Direct Connect Gateway según corresponda.
 
+**Excepción — arquitectura de red de referencia (egress centralizado):** si el cliente usa el patrón default de red con egress centralizado en la cuenta Networking (ver [`docs/03-workloads/05-arquitectura-red-referencia.md`](../03-workloads/05-arquitectura-red-referencia.md)), el Transit Gateway **no** se declara acá — se crea por Terraform en la Etapa 3, para mantener unificada en Terraform la forma de trabajar la red con el resto de los workloads del cliente. Dejar `transitGateways` sin usar en ese caso y no mezclar un TGW de LZA con el de Terraform en la misma Organization.
+
 ### 5. Identidad y accesos (SSO) → `iam-config.yaml`
 - Si el cliente usa IAM Identity Center nativo: grupos y permission sets del intake → `identityCenter.identityCenterPermissionSets` y sus asignaciones.
 - Si el cliente federa con un IdP externo (Azure AD/Okta/etc.): la metadata SAML relevada configura el `identityCenter` como broker o un `samlProviders` según el patrón elegido — este es el punto del mapeo con más variantes; validar contra la versión de LZA instalada antes de definir el approach.

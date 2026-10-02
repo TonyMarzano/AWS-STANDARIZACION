@@ -11,15 +11,21 @@ Ver la metodología completa de esta etapa en el repo `AWS-STANDARIZACION`, [`do
 
 ## Estructura
 
+Arquitectura de red de referencia: egress centralizado vía Transit Gateway — las VPCs spoke no tienen salida propia a Internet, **la salida a Internet se centraliza en la cuenta Networking** (NAT); el tráfico entre spokes (Prod↔Dev) viaja directo por el Transit Gateway. Ver el diseño completo, con diagrama, en [`docs/03-workloads/05-arquitectura-red-referencia.md`](https://github.com/TonyMarzano/AWS-STANDARIZACION/blob/main/docs/03-workloads/05-arquitectura-red-referencia.md).
+
 ```
 envs/
+  networking/
+    network/        Transit Gateway + VPC de Networking (salida a Internet) — desplegar primero, una sola vez
   prod/
-    network/       VPC + attachment al Transit Gateway central — desplegar primero
+    network/        VPC Workloads Prod (sin salida propia) + attachment al Transit Gateway
     <workload>/     Copiar este patrón por cada carga de trabajo (ALB, compute, etc.)
   nonprod/
-    network/
+    network/        VPC Workloads Dev (sin salida propia) + attachment al Transit Gateway
     <workload>/
 ```
+
+**Orden de despliegue:** `envs/networking/network` primero → cada cuenta spoke acepta la invitación de RAM del Transit Gateway → recién entonces `envs/prod/network` y `envs/nonprod/network`.
 
 ## Datos del cliente
 
@@ -29,5 +35,6 @@ envs/
 | Tabla de locks | `tf-locks-<cliente>` |
 | Región | |
 | Cuenta Shared Services (Account ID) | |
+| Cuenta Networking (Account ID) | |
 | Cuenta Prod (Account ID) | |
-| Cuenta NonProd (Account ID) | |
+| Cuenta NonProd/Dev (Account ID) | |

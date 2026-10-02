@@ -1,5 +1,12 @@
-cliente             = "<cliente>"
-region              = "<home-region>"
-aws_profile         = "<perfil-cuenta-prod-cliente>"
-vpc_cidr            = "10.0.0.0/16"
-transit_gateway_id  = "tgw-xxxxxxxxxxxxxxxxx"
+cliente     = "<cliente>"
+region      = "<home-region>"
+aws_profile = "<perfil-cuenta-prod-cliente>"
+
+azs = ["<home-region>a", "<home-region>b"]
+
+vpc_cidr              = "10.1.0.0/16"
+private_subnet_cidrs  = ["10.1.0.0/20", "10.1.16.0/20"]
+tgw_subnet_cidrs      = ["10.1.252.0/28", "10.1.252.16/28"]
+
+transit_gateway_id  = "tgw-xxxxxxxxxxxxxxxxx"      # output de envs/networking/network
+tgw_route_table_id  = "tgw-rtb-xxxxxxxxxxxxxxxxx"  # output tgw_route_table_id
