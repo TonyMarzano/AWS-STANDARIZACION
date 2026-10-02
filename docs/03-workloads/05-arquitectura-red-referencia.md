@@ -1,6 +1,8 @@
 # Arquitectura de red de referencia — egress centralizado vía Transit Gateway
 
-Diseño default para la red de un cliente nuevo en la Etapa 3: un Transit Gateway conecta la cuenta **Networking** con las cuentas **Workloads Prod** y **Workloads Dev**. Las VPCs spoke no tienen salida propia a Internet — **la salida a Internet de toda la Organization se centraliza en la VPC de la cuenta Networking** (IGW + NAT), mientras que el tráfico entre spokes (Prod ↔ Dev) viaja directo por el Transit Gateway, sin pasar por Networking. Es el patrón estándar de "egress centralizado" de AWS — no asume ningún appliance de inspección de terceros; si más adelante un cliente necesita eso, se evalúa como una pieza aparte sobre esta misma base.
+Diseño default para la red de un cliente nuevo en la Etapa 3: un Transit Gateway conecta la cuenta **Networking** con las cuentas **Workloads Prod** y **Workloads Dev**. Las VPCs spoke no tienen salida propia a Internet — **la salida a Internet de toda la Organization se centraliza en la VPC de la cuenta Networking** (IGW + NAT), mientras que el tráfico entre spokes (Prod ↔ Dev) viaja directo por el Transit Gateway, sin pasar por Networking. Es el patrón estándar de "egress centralizado" de AWS — no asume ningún appliance de inspección de terceros.
+
+> **¿El cliente necesita inspección de tráfico con FortiGate?** Esta no es la variante — ver [`06-arquitectura-red-fortigate.md`](06-arquitectura-red-fortigate.md), que fuerza *todo* el tráfico (incluido spoke↔spoke) a pasar por el firewall.
 
 Implementado con los módulos `vpc`, `transit-gateway` y `tgw-attachment` de [`terraform-modules-bgh`](../../templates/terraform-modules-bgh/) — ver el código ahí. Este documento explica el **porqué** del diseño; los módulos y sus README tienen el **cómo**.
 

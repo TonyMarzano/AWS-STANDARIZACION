@@ -1,0 +1,17 @@
+cliente = "<cliente>"
+
+account_ids = {
+  network = "<account-id-networking>"
+  shared  = "<account-id-shared-services>"
+  prod    = "<account-id-workloads-prod>"
+  qa      = "<account-id-workloads-qa>"
+}
+
+# assume_role_name        = "AWSControlTowerExecution"
+# manage_ram_org_sharing  = false
+# fortigate_lan_eni_ids   = { az1 = "eni-xxxx", az2 = "eni-yyyy" }
+
+tags = {
+  # CostCenter = "..."
+  # Owner      = "..."
+}

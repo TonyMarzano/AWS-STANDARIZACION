@@ -4,6 +4,8 @@ Terraform de las cargas de trabajo de [NOMBRE DEL CLIENTE], sobre la Landing Zon
 
 Ver la metodología completa de esta etapa en el repo `AWS-STANDARIZACION`, [`docs/03-workloads/`](https://github.com/TonyMarzano/AWS-STANDARIZACION/tree/main/docs/03-workloads).
 
+> **¿Este cliente necesita inspección de tráfico con FortiGate?** Este skeleton no lo contempla — usar [`templates/terraform-client-repo-fortigate/`](https://github.com/TonyMarzano/AWS-STANDARIZACION/tree/main/templates/terraform-client-repo-fortigate) en su lugar. Ver la comparación en [`docs/03-workloads/06-arquitectura-red-fortigate.md`](https://github.com/TonyMarzano/AWS-STANDARIZACION/blob/main/docs/03-workloads/06-arquitectura-red-fortigate.md).
+
 ## Antes de tocar este repo
 
 1. El backend de state (S3 + DynamoDB) debe existir en la cuenta Shared Services del cliente — ver [`02-backend-state.md`](https://github.com/TonyMarzano/AWS-STANDARIZACION/blob/main/docs/03-workloads/02-backend-state.md) para el bootstrap.

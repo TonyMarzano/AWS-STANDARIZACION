@@ -1,0 +1,21 @@
+# Terraform
+**/.terraform/*
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Variables con datos sensibles (usar .tfvars.example como plantilla)
+*.auto.tfvars
+terraform.tfvars
+!*.tfvars.example
+
+# Sistema
+.DS_Store
+Thumbs.db
